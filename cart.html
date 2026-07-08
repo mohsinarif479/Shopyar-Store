@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cart | Shopyar</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="assets/logo.jpg" />
+  </head>
+  <body>
+    <header class="topbar"><div class="topbar-inner"><button class="nav-toggle" aria-label="Open menu">☰</button><a class="brand" href="index.html"><img class="logo" src="assets/logo.jpg" alt="Shopyar logo" /><span class="brand-text">Shopyar</span></a><nav class="nav-links"><a href="shop.html">Shop</a><a href="popular.html">Popular</a><a href="deals.html">Deals</a><a href="cart.html" class="active">Cart</a></nav><div class="top-actions"><button class="cart" id="cart-toggle" type="button" aria-label="Cart">🛒<span class="cart-count" id="cart-count">0</span></button></div></div></header>
+    <main class="store-page">
+      <section class="store-page-hero"><p class="eyebrow">Cart</p><h1>Your shopping cart</h1><p>Review quantities before moving to checkout.</p></section>
+      <section class="checkout-layout">
+        <div class="dashboard-card"><div id="cart-page-items" class="cart-page-list"></div></div>
+        <aside class="dashboard-card checkout-side"><span>Total</span><strong id="cart-page-total" class="price">Rs 0</strong><a class="btn btn-primary" href="checkout.html">Checkout</a><a class="btn btn-secondary" href="shop.html">Continue shopping</a></aside>
+      </section>
+    </main>
+    <aside id="cart-drawer" class="cart-drawer" aria-hidden="true"><div class="cart-drawer-header"><h3>Your cart</h3><button class="modal-close" id="cart-close" type="button" aria-label="Close cart">×</button></div><div id="cart-items" class="cart-items"></div><div class="cart-drawer-footer"><div class="cart-total"><span>Total</span><strong id="cart-total">Rs 0</strong></div><button class="btn btn-primary" id="cart-checkout" type="button">Buy now</button></div></aside>
+    <div id="toast" class="toast" hidden></div>
+    <script src="script.js"></script>
+  </body>
+</html>

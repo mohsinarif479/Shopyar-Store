@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout | Shopyar</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="assets/logo.jpg" />
+  </head>
+  <body>
+    <header class="topbar"><div class="topbar-inner"><a class="brand" href="index.html"><img class="logo" src="assets/logo.jpg" alt="Shopyar logo" /><span class="brand-text">Shopyar</span></a><nav class="nav-links"><a href="shop.html">Shop</a><a href="cart.html">Cart</a></nav></div></header>
+    <main class="store-page">
+      <section class="store-page-hero"><p class="eyebrow">Checkout</p><h1>Delivery details</h1><p>Enter your contact and address so we can confirm your order.</p></section>
+      <section class="checkout-layout">
+        <form class="checkout-form dashboard-card" id="checkout-form">
+          <label>Full name<input type="text" name="customerName" required /></label>
+          <label>Phone number<input type="tel" name="phone" required /></label>
+          <label>Address<textarea name="address" rows="4" required></textarea></label>
+          <label>Notes<textarea name="notes" rows="2" placeholder="Any delivery instructions?"></textarea></label>
+          <button class="btn btn-primary" type="submit">Place order</button>
+        </form>
+        <aside class="dashboard-card"><p class="eyebrow">Summary</p><div id="checkout-page-summary" class="checkout-summary"></div></aside>
+      </section>
+    </main>
+    <div id="toast" class="toast" hidden></div>
+    <script src="script.js"></script>
+  </body>
+</html>

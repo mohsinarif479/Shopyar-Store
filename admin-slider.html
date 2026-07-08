@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shopyar Admin | Slider</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="admin-page">
+    <nav class="login-nav">
+      <a class="brand" href="index.html"><img class="logo" src="assets/logo.jpg" alt="Shopyar logo" /><span class="brand-text">Shopyar</span></a>
+      <a class="btn btn-secondary" href="index.html">Back to store</a>
+    </nav>
+    <section id="login-view" class="card login-card">
+      <p class="eyebrow">Secure access</p>
+      <h1>Admin login</h1>
+      <form id="login-form" class="stacked-form">
+        <label>Email<input type="email" id="login-email" required /></label>
+        <label>Password<input type="password" id="login-password" required /></label>
+        <button class="btn btn-primary" type="submit">Login</button>
+      </form>
+      <p id="login-feedback" class="feedback"></p>
+    </section>
+
+    <section id="dashboard-view" class="admin-layout" hidden>
+      <aside class="admin-sidebar">
+        <a class="sidebar-brand" href="admin.html">
+          <img class="logo" src="assets/logo.jpg" alt="Shopyar logo" />
+          <div><strong class="brand-text">Shopyar</strong><span>Commerce Admin</span></div>
+        </a>
+        <nav class="sidebar-nav">
+          <a class="sidebar-link" href="admin.html">Overview</a>
+          <a class="sidebar-link" href="admin-orders.html">Orders</a>
+          <a class="sidebar-link" href="admin-products.html">Products</a>
+          <a class="sidebar-link" href="admin-storefront.html">Storefront</a>
+          <a class="sidebar-link active" href="admin-slider.html">Slider</a>
+          <a class="sidebar-link" href="admin-branding.html">Branding</a>
+          <a class="sidebar-link" href="admin-security.html">Security</a>
+        </nav>
+        <div class="sidebar-footer">
+          <a class="btn btn-secondary" href="index.html">View store</a>
+          <button id="logout-btn" class="btn btn-secondary" type="button">Logout</button>
+        </div>
+      </aside>
+
+      <main class="admin-main">
+        <header class="admin-page-header">
+          <div>
+            <p class="eyebrow">Homepage media</p>
+            <h1>Hero slider</h1>
+            <p class="muted">Set the first slide headline, supporting text, and optional image background.</p>
+          </div>
+        </header>
+        <section class="panel-grid two-col">
+          <div class="dashboard-card">
+            <form id="slider-form" class="stacked-form">
+              <label>Title<input type="text" id="slider-title" required /></label>
+              <label>Subtitle<textarea id="slider-subtitle" rows="3" required></textarea></label>
+              <label>Image URL<input type="url" id="slider-image" placeholder="https://example.com/banner.jpg" /></label>
+              <button class="btn btn-primary" type="submit">Save slider</button>
+            </form>
+          </div>
+          <div class="dashboard-card admin-preview-card">
+            <p class="eyebrow">Preview note</p>
+            <h2>Changes publish to the storefront hero</h2>
+            <p class="muted">Use a wide image for best results. The storefront adds a readable green overlay automatically.</p>
+            <a class="btn btn-secondary" href="index.html">Open storefront</a>
+          </div>
+        </section>
+      </main>
+    </section>
+    <script src="admin.js"></script>
+  </body>
+</html>

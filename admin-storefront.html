@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shopyar Admin | Storefront</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="admin-page">
+    <nav class="login-nav">
+      <a class="brand" href="index.html"><img class="logo" src="assets/logo.jpg" alt="Shopyar logo" /><span class="brand-text">Shopyar</span></a>
+      <a class="btn btn-secondary" href="index.html">Back to store</a>
+    </nav>
+    <section id="login-view" class="card login-card">
+      <p class="eyebrow">Secure access</p>
+      <h1>Admin login</h1>
+      <form id="login-form" class="stacked-form">
+        <label>Email<input type="email" id="login-email" required /></label>
+        <label>Password<input type="password" id="login-password" required /></label>
+        <button class="btn btn-primary" type="submit">Login</button>
+      </form>
+      <p id="login-feedback" class="feedback"></p>
+    </section>
+
+    <section id="dashboard-view" class="admin-layout" hidden>
+      <aside class="admin-sidebar">
+        <a class="sidebar-brand" href="admin.html">
+          <img class="logo" src="assets/logo.jpg" alt="Shopyar logo" />
+          <div><strong class="brand-text">Shopyar</strong><span>Commerce Admin</span></div>
+        </a>
+        <nav class="sidebar-nav">
+          <a class="sidebar-link" href="admin.html">Overview</a>
+          <a class="sidebar-link" href="admin-orders.html">Orders</a>
+          <a class="sidebar-link" href="admin-products.html">Products</a>
+          <a class="sidebar-link active" href="admin-storefront.html">Storefront</a>
+          <a class="sidebar-link" href="admin-slider.html">Slider</a>
+          <a class="sidebar-link" href="admin-branding.html">Branding</a>
+          <a class="sidebar-link" href="admin-security.html">Security</a>
+        </nav>
+        <div class="sidebar-footer">
+          <a class="btn btn-secondary" href="index.html">View store</a>
+          <button id="logout-btn" class="btn btn-secondary" type="button">Logout</button>
+        </div>
+      </aside>
+
+      <main class="admin-main">
+        <header class="admin-page-header">
+          <div>
+            <p class="eyebrow">Store design</p>
+            <h1>Storefront content</h1>
+            <p class="muted">Customize hero copy, marketing banners, footer contact details, and trust messaging.</p>
+          </div>
+        </header>
+        <div class="dashboard-card">
+          <form id="store-content-form" class="stacked-form dashboard-form-grid">
+            <label>Hero eyebrow<input type="text" id="content-hero-eyebrow" required /></label>
+            <label>Hero headline<input type="text" id="content-hero-title" required /></label>
+            <label class="span-2">Hero description<textarea id="content-hero-text" rows="2" required></textarea></label>
+            <label>Promo eyebrow<input type="text" id="content-promo-eyebrow" required /></label>
+            <label>Promo headline<input type="text" id="content-promo-title" required /></label>
+            <label>Feature eyebrow<input type="text" id="content-feature-eyebrow" required /></label>
+            <label>Feature headline<input type="text" id="content-feature-title" required /></label>
+            <label class="span-2">Feature description<textarea id="content-feature-text" rows="2" required></textarea></label>
+            <label>CTA eyebrow<input type="text" id="content-cta-eyebrow" required /></label>
+            <label>CTA headline<input type="text" id="content-cta-title" required /></label>
+            <label>Shipping message<input type="text" id="content-shipping-text" required /></label>
+            <label>Rating message<input type="text" id="content-rating-text" required /></label>
+            <label>Support message<input type="text" id="content-support-text" required /></label>
+            <label>Support email<input type="email" id="content-support-email" required /></label>
+            <label>Support phone<input type="text" id="content-support-phone" required /></label>
+            <label>WhatsApp number<input type="text" id="content-whatsapp-number" placeholder="+92 300 1234567" required /></label>
+            <label class="span-2">Footer description<textarea id="content-footer-text" rows="2" required></textarea></label>
+            <button class="btn btn-primary span-2" type="submit">Save storefront content</button>
+          </form>
+        </div>
+      </main>
+    </section>
+    <script src="admin.js"></script>
+  </body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shopyar Admin | Products</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="admin-page">
+    <nav class="login-nav">
+      <a class="brand" href="index.html"><img class="logo" src="assets/logo.jpg" alt="Shopyar logo" /><span class="brand-text">Shopyar</span></a>
+      <a class="btn btn-secondary" href="index.html">Back to store</a>
+    </nav>
+    <section id="login-view" class="card login-card">
+      <p class="eyebrow">Secure access</p>
+      <h1>Admin login</h1>
+      <form id="login-form" class="stacked-form">
+        <label>Email<input type="email" id="login-email" required /></label>
+        <label>Password<input type="password" id="login-password" required /></label>
+        <button class="btn btn-primary" type="submit">Login</button>
+      </form>
+      <p id="login-feedback" class="feedback"></p>
+    </section>
+
+    <section id="dashboard-view" class="admin-layout" hidden>
+      <aside class="admin-sidebar">
+        <a class="sidebar-brand" href="admin.html">
+          <img class="logo" src="assets/logo.jpg" alt="Shopyar logo" />
+          <div><strong class="brand-text">Shopyar</strong><span>Commerce Admin</span></div>
+        </a>
+        <nav class="sidebar-nav">
+          <a class="sidebar-link" href="admin.html">Overview</a>
+          <a class="sidebar-link" href="admin-orders.html">Orders</a>
+          <a class="sidebar-link active" href="admin-products.html">Products</a>
+          <a class="sidebar-link" href="admin-storefront.html">Storefront</a>
+          <a class="sidebar-link" href="admin-slider.html">Slider</a>
+          <a class="sidebar-link" href="admin-branding.html">Branding</a>
+          <a class="sidebar-link" href="admin-security.html">Security</a>
+        </nav>
+        <div class="sidebar-footer">
+          <a class="btn btn-secondary" href="index.html">View store</a>
+          <button id="logout-btn" class="btn btn-secondary" type="button">Logout</button>
+        </div>
+      </aside>
+
+      <main class="admin-main">
+        <header class="admin-page-header">
+          <div>
+            <p class="eyebrow">Catalog</p>
+            <h1>Products and collections</h1>
+            <p class="muted">Create products, edit pricing, upload product images, and organize collections.</p>
+          </div>
+        </header>
+
+        <section class="panel-grid two-col">
+          <div class="dashboard-card">
+            <div class="section-header small"><div><p class="eyebrow">Product editor</p><h2 id="product-form-title">Add a product</h2></div></div>
+            <form id="product-form" class="stacked-form">
+              <input type="hidden" id="product-id" />
+              <label>Product name<input type="text" id="product-name" required /></label>
+              <label>
+                Category
+                <select id="product-category" required></select>
+              </label>
+              <div class="form-row">
+                <label>Price<input type="number" id="product-price" min="0" step="0.01" required /></label>
+                <label>Sale price<input type="number" id="product-sale-price" min="0" step="0.01" /></label>
+              </div>
+              <div class="form-row">
+                <label>SKU<input type="text" id="product-sku" placeholder="SKU-1001" /></label>
+                <label>Stock quantity<input type="number" id="product-stock" min="0" step="1" /></label>
+              </div>
+              <div class="form-row">
+                <label>Status<select id="product-status"><option value="active">Active</option><option value="draft">Draft</option></select></label>
+                <label>Delivery fee<input type="number" id="product-delivery-fee" min="0" step="0.01" /></label>
+              </div>
+              <label>Image URL<input type="url" id="product-image" placeholder="https://example.com/image.jpg" /></label>
+              <label>Gallery image URLs<textarea id="product-gallery" rows="2" placeholder="Separate multiple image URLs with commas"></textarea></label>
+              <label>Tags / features<textarea id="product-tags" rows="2" placeholder="Portable, rechargeable, compact"></textarea></label>
+              <label>Description<textarea id="product-description" rows="4" required></textarea></label>
+              <label class="checkbox-row"><input type="checkbox" id="product-popular" /> Mark as popular</label>
+              <label class="checkbox-row"><input type="checkbox" id="product-featured" /> Feature on homepage</label>
+              <div class="form-actions">
+                <button class="btn btn-primary" type="submit">Publish product</button>
+                <button id="cancel-edit-btn" class="btn btn-secondary" type="button" hidden>Cancel edit</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="admin-stack">
+            <div class="dashboard-card">
+              <div class="section-header small"><div><p class="eyebrow">Collections</p><h2>Manage categories</h2></div></div>
+              <form id="collection-form" class="stacked-form compact">
+                <label>Collection name<input type="text" id="collection-name" placeholder="e.g. Fashion Edit" required /></label>
+                <button class="btn btn-primary" type="submit">Add collection</button>
+              </form>
+              <div id="collection-list" class="product-list"></div>
+            </div>
+            <div class="dashboard-card">
+              <div class="section-header small"><div><p class="eyebrow">Inventory</p><h2>Current products</h2></div></div>
+              <div id="product-list" class="product-list"></div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </section>
+    <script src="admin.js"></script>
+  </body>
+</html>

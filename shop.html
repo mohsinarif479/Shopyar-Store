@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shop | Shopyar</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="assets/logo.jpg" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <button class="nav-toggle" aria-label="Open menu">☰</button>
+        <a class="brand" href="index.html"><img class="logo" src="assets/logo.jpg" alt="Shopyar logo" /><span class="brand-text">Shopyar</span></a>
+        <nav class="nav-links" aria-label="Main navigation">
+          <a href="shop.html" class="active">Shop</a>
+          <a href="popular.html">Popular</a>
+          <a href="deals.html">Deals</a>
+        </nav>
+        <div class="top-actions">
+          <div class="search-wrap"><span class="search-icon">⌕</span><input id="site-search" class="search" placeholder="Search products" aria-label="Search" /></div>
+          <button class="cart" id="cart-toggle" type="button" aria-label="Cart">🛒<span class="cart-count" id="cart-count">0</span></button>
+        </div>
+      </div>
+    </header>
+
+    <div id="store-watermark" class="store-watermark" aria-hidden="true"></div>
+
+    <main class="store-page">
+      <section class="store-page-hero">
+        <p class="eyebrow">Catalog</p>
+        <h1>Shop every collection</h1>
+        <p>Browse products by category, search instantly, and move from discovery to checkout without friction.</p>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div><p class="eyebrow">Categories</p><h2>Filter products</h2></div>
+          <p>Use the category controls or search bar to narrow the catalog.</p>
+        </div>
+        <div id="category-chips" class="chip-row"></div>
+        <div class="quick-category-links">
+          <a href="category-gadgets.html">Gadgets</a>
+          <a href="category-home.html">Home products</a>
+          <a href="category-kids.html">Kids</a>
+          <a href="category-daily-use.html">Daily use</a>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div><p class="eyebrow">All products</p><h2>Available now</h2></div>
+          <select id="product-sort" class="sort-select" aria-label="Sort products">
+            <option value="featured">Featured</option>
+            <option value="newest">Newest</option>
+            <option value="price-asc">Price low to high</option>
+            <option value="price-desc">Price high to low</option>
+            <option value="popular">Popular</option>
+          </select>
+        </div>
+        <div id="catalog-products" class="product-grid"></div>
+      </section>
+    </main>
+
+    <div id="product-modal" class="modal" hidden><div class="modal-backdrop" data-close-modal="true"></div><div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title"><button class="modal-close" data-close-modal="true" aria-label="Close">×</button><div id="modal-content"></div></div></div>
+    <aside id="cart-drawer" class="cart-drawer" aria-hidden="true">
+      <div class="cart-drawer-header"><h3>Your cart</h3><button class="modal-close" id="cart-close" type="button" aria-label="Close cart">×</button></div>
+      <div id="cart-items" class="cart-items"></div>
+      <div class="cart-drawer-footer"><div class="cart-total"><span>Total</span><strong id="cart-total">Rs 0</strong></div><button class="btn btn-primary" id="cart-checkout" type="button">Buy now</button></div>
+    </aside>
+    <div id="toast" class="toast" hidden></div>
+    <script src="script.js"></script>
+  </body>
+</html>

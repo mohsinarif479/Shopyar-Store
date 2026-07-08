@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shopyar | Modern Green Store</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="assets/logo.jpg" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <button class="nav-toggle" aria-label="Open menu">☰</button>
+        <a class="brand" href="index.html">
+          <img class="logo" src="assets/logo.jpg" alt="Shopyar logo" />
+          <span class="brand-text">Shopyar</span>
+        </a>
+        <nav class="nav-links" aria-label="Main navigation">
+          <a href="shop.html">Shop</a>
+          <a href="popular.html">Popular</a>
+          <a href="deals.html">Deals</a>
+        </nav>
+        <div class="top-actions">
+          <div class="search-wrap">
+            <span class="search-icon">⌕</span>
+            <input id="site-search" class="search" placeholder="Search products" aria-label="Search" />
+          </div>
+          <button class="cart" id="cart-toggle" type="button" aria-label="Cart">
+            🛒
+            <span class="cart-count" id="cart-count">0</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div id="store-watermark" class="store-watermark" aria-hidden="true"></div>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow" data-content="hero-eyebrow">Everyday finds</p>
+          <h1 data-content="hero-title">Products for home, gadgets, kids, and daily life.</h1>
+          <p data-content="hero-text">
+            Shopyar brings useful products, smart gadgets, home essentials, and family favorites into one easy shopping place.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="shop.html">Shop collection</a>
+          </div>
+          <div class="hero-stats">
+            <div>
+              <strong>Free shipping</strong>
+              <span data-content="shipping-text">On orders over Rs 8,000</span>
+            </div>
+            <div>
+              <strong>4.9/5</strong>
+              <span data-content="rating-text">Rated by customers</span>
+            </div>
+            <div>
+              <strong>Easy support</strong>
+              <span data-content="support-text">Help when you need it</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-showcase">
+          <div class="slider-shell">
+            <div class="slider-track">
+              <article class="slide active">
+                <div class="showcase-top">
+                  <span class="pill">Fresh arrivals</span>
+                  <span class="pill">Spring edit</span>
+                </div>
+                <h3>Modern pieces for a lighter everyday look.</h3>
+                <p>Explore the newest arrivals crafted in soft greens and calm neutrals.</p>
+              </article>
+              <article class="slide">
+                <div class="showcase-top">
+                  <span class="pill">Best seller</span>
+                  <span class="pill">Limited drop</span>
+                </div>
+                <h3>Upgrade your space with timeless comfort.</h3>
+                <p>Layer your home with warm textures and elevated minimalist essentials.</p>
+              </article>
+              <article class="slide">
+                <div class="showcase-top">
+                  <span class="pill">Flash sale</span>
+                  <span class="pill">Weekend only</span>
+                </div>
+                <h3>Save big on curated favorites.</h3>
+                <p>Enjoy premium deals on essentials that feel fresh, modern, and effortless.</p>
+              </article>
+            </div>
+            <div class="slider-controls">
+              <button class="slider-btn" data-dir="-1" aria-label="Previous slide">←</button>
+              <div class="slider-dots"></div>
+              <button class="slider-btn" data-dir="1" aria-label="Next slide">→</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="promo-banner">
+        <div>
+          <p class="eyebrow" data-content="promo-eyebrow">Limited time offer</p>
+          <h2 data-content="promo-title">Free shipping + exclusive bundles this weekend.</h2>
+        </div>
+        <a class="btn btn-primary" href="deals.html">Explore deals</a>
+      </section>
+
+      <section class="trust-bar">
+        <div class="trust-item">
+          <strong>Fast delivery</strong>
+          <span>Nationwide shipping in 2–4 days</span>
+        </div>
+        <div class="trust-item">
+          <strong>Secure checkout</strong>
+          <span>Protected payments and simple returns</span>
+        </div>
+        <div class="trust-item">
+          <strong>Premium quality</strong>
+          <span>Thoughtfully selected products</span>
+        </div>
+      </section>
+
+      <section class="collection-grid">
+        <article class="collection-card">
+          <div class="collection-icon">✦</div>
+          <h3>Gadgets</h3>
+          <p>Smart everyday devices for home, travel, and work.</p>
+          <a class="inline-link" href="category-gadgets.html">Shop gadgets</a>
+        </article>
+        <article class="collection-card">
+          <div class="collection-icon">⌂</div>
+          <h3>Home products</h3>
+          <p>Useful kitchen, storage, lighting, and home essentials.</p>
+          <a class="inline-link" href="category-home.html">Shop home</a>
+        </article>
+        <article class="collection-card">
+          <div class="collection-icon">◌</div>
+          <h3>Kids and daily use</h3>
+          <p>Family-friendly items for children and everyday routines.</p>
+          <a class="inline-link" href="category-kids.html">Shop kids</a>
+        </article>
+      </section>
+
+      <section id="categories" class="section">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Explore</p>
+            <h2>Browse categories</h2>
+          </div>
+          <p>Discover products tailored to every mood and moment.</p>
+        </div>
+        <div id="category-chips" class="chip-row"></div>
+      </section>
+
+      <section class="feature-banner">
+        <div>
+          <p class="eyebrow" data-content="feature-eyebrow">Featured collection</p>
+          <h2 data-content="feature-title">The calm collection</h2>
+          <p data-content="feature-text">Soft tones, premium finishes, and timeless pieces for the refined home and wardrobe.</p>
+        </div>
+        <a class="btn btn-primary" href="shop.html">Discover more</a>
+      </section>
+
+      <section id="catalog" class="section">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Featured</p>
+            <h2>Shop the collection</h2>
+          </div>
+          <p>Curated pieces with a fresh green palette and modern finish.</p>
+        </div>
+        <div id="catalog-products" class="product-grid"></div>
+      </section>
+
+      <section id="popular" class="section">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Best sellers</p>
+            <h2>Popular picks</h2>
+          </div>
+          <p>Most loved by shoppers this month.</p>
+        </div>
+        <div id="popular-products" class="product-grid"></div>
+      </section>
+
+      <section id="sales" class="section">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Limited-time</p>
+            <h2>Sales highlights</h2>
+          </div>
+          <p>Save on standout items before the collection changes.</p>
+        </div>
+        <div id="sales-products" class="product-grid"></div>
+      </section>
+
+      <section class="cta-banner">
+        <div>
+          <p class="eyebrow" data-content="cta-eyebrow">Customer-first shopping</p>
+          <h2 data-content="cta-title">Place your order with ease and get your favorites delivered quickly.</h2>
+        </div>
+        <a class="btn btn-secondary" href="shop.html">Shop now</a>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-grid">
+        <div>
+          <a class="brand footer-brand" href="index.html">
+            <img class="logo" src="assets/logo.jpg" alt="Shopyar logo" />
+            <span class="brand-text">Shopyar</span>
+          </a>
+          <p data-content="footer-text">Premium shopping for modern Pakistani homes, fashion, and everyday essentials.</p>
+        </div>
+        <div>
+          <h3>Quick links</h3>
+          <a href="shop.html">Shop</a>
+          <a href="popular.html">Popular picks</a>
+          <a href="deals.html">Sales</a>
+          <a href="about.html">About us</a>
+        </div>
+        <div>
+          <h3>Customer care</h3>
+          <a href="mailto:support@shopyar.pk" data-content="support-email">support@shopyar.pk</a>
+          <span data-content="support-phone">+92 300 1234567</span>
+          <a href="shipping-policy.html">Shipping policy</a>
+          <a href="return-policy.html">Return policy</a>
+          <a href="privacy-policy.html">Privacy policy</a>
+          <a href="contact.html">Contact us</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+          <p>© 2026 Shopyar. Everyday products for Pakistani homes.</p>
+        <p>Secure checkout • Fast delivery • Easy returns</p>
+      </div>
+    </footer>
+
+    <div id="product-modal" class="modal" hidden>
+      <div class="modal-backdrop" data-close-modal="true"></div>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <button class="modal-close" data-close-modal="true" aria-label="Close">×</button>
+        <div id="modal-content"></div>
+      </div>
+    </div>
+
+    <aside id="cart-drawer" class="cart-drawer" aria-hidden="true">
+      <div class="cart-drawer-header">
+        <h3>Your cart</h3>
+        <button class="modal-close" id="cart-close" type="button" aria-label="Close cart">×</button>
+      </div>
+      <div id="cart-items" class="cart-items"></div>
+      <div class="cart-drawer-footer">
+        <div class="cart-total">
+          <span>Total</span>
+          <strong id="cart-total">Rs 0</strong>
+        </div>
+        <button class="btn btn-primary" id="cart-checkout" type="button">Buy now</button>
+      </div>
+    </aside>
+
+    <div id="toast" class="toast" hidden></div>
+    <a class="whatsapp-float" href="https://wa.me/923001234567" data-content="whatsapp-link" aria-label="Chat on WhatsApp">WhatsApp</a>
+
+    <script src="script.js"></script>
+  </body>
+</html>

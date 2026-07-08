@@ -1,0 +1,13 @@
+{
+  "name": "shopyar-store",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A modern green-and-off-white e-commerce storefront for Shopyar, ready for Vercel deployment.",
+  "dependencies": {
+    "@vercel/kv": "^3.0.0"
+  },
+  "scripts": {
+    "start": "python -m http.server 3000"
+  }
+}

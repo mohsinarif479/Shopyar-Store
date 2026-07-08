@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Search | Shopyar</title><link rel="stylesheet" href="styles.css" /><link rel="icon" href="assets/logo.jpg" /></head>
+  <body>
+    <header class="topbar"><div class="topbar-inner"><button class="nav-toggle" aria-label="Open menu">☰</button><a class="brand" href="index.html"><img class="logo" src="assets/logo.jpg" alt="Shopyar logo" /><span class="brand-text">Shopyar</span></a><nav class="nav-links"><a href="shop.html">Shop</a><a href="popular.html">Popular</a><a href="deals.html">Deals</a><a href="cart.html">Cart</a></nav><div class="top-actions"><div class="search-wrap"><span class="search-icon">⌕</span><input id="site-search" class="search" placeholder="Search products" aria-label="Search" /></div><button class="cart" id="cart-toggle" type="button">🛒<span class="cart-count" id="cart-count">0</span></button></div></div></header>
+    <main class="store-page">
+      <section class="store-page-hero"><p class="eyebrow">Search</p><h1 id="search-heading">Search products</h1><p>Find gadgets, home products, kids items, and daily essentials.</p></section>
+      <section class="section"><div class="section-header"><div><p class="eyebrow">Results</p><h2>Matching products</h2></div><select id="product-sort" class="sort-select"><option value="featured">Featured</option><option value="newest">Newest</option><option value="price-asc">Price low to high</option><option value="price-desc">Price high to low</option><option value="popular">Popular</option></select></div><div id="search-products" class="product-grid"></div></section>
+    </main>
+    <aside id="cart-drawer" class="cart-drawer" aria-hidden="true"><div class="cart-drawer-header"><h3>Your cart</h3><button class="modal-close" id="cart-close" type="button">×</button></div><div id="cart-items" class="cart-items"></div><div class="cart-drawer-footer"><div class="cart-total"><span>Total</span><strong id="cart-total">Rs 0</strong></div><button class="btn btn-primary" id="cart-checkout" type="button">Buy now</button></div></aside><div id="toast" class="toast" hidden></div><script src="script.js"></script>
+  </body>
+</html>

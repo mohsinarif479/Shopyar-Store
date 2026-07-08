@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shopyar Admin | Branding</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="admin-page">
+    <nav class="login-nav">
+      <a class="brand" href="index.html"><img class="logo" src="assets/logo.jpg" alt="Shopyar logo" /><span class="brand-text">Shopyar</span></a>
+      <a class="btn btn-secondary" href="index.html">Back to store</a>
+    </nav>
+    <section id="login-view" class="card login-card">
+      <p class="eyebrow">Secure access</p>
+      <h1>Admin login</h1>
+      <form id="login-form" class="stacked-form">
+        <label>Email<input type="email" id="login-email" required /></label>
+        <label>Password<input type="password" id="login-password" required /></label>
+        <button class="btn btn-primary" type="submit">Login</button>
+      </form>
+      <p id="login-feedback" class="feedback"></p>
+    </section>
+
+    <section id="dashboard-view" class="admin-layout" hidden>
+      <aside class="admin-sidebar">
+        <a class="sidebar-brand" href="admin.html">
+          <img class="logo" src="assets/logo.jpg" alt="Shopyar logo" />
+          <div><strong class="brand-text">Shopyar</strong><span>Commerce Admin</span></div>
+        </a>
+        <nav class="sidebar-nav">
+          <a class="sidebar-link" href="admin.html">Overview</a>
+          <a class="sidebar-link" href="admin-orders.html">Orders</a>
+          <a class="sidebar-link" href="admin-products.html">Products</a>
+          <a class="sidebar-link" href="admin-storefront.html">Storefront</a>
+          <a class="sidebar-link" href="admin-slider.html">Slider</a>
+          <a class="sidebar-link active" href="admin-branding.html">Branding</a>
+          <a class="sidebar-link" href="admin-security.html">Security</a>
+        </nav>
+        <div class="sidebar-footer">
+          <a class="btn btn-secondary" href="index.html">View store</a>
+          <button id="logout-btn" class="btn btn-secondary" type="button">Logout</button>
+        </div>
+      </aside>
+
+      <main class="admin-main">
+        <header class="admin-page-header">
+          <div>
+            <p class="eyebrow">Identity</p>
+            <h1>Branding</h1>
+            <p class="muted">Customize the visible store name, logo assets, watermark, and theme colors.</p>
+          </div>
+        </header>
+        <section class="panel-grid two-col">
+          <div class="dashboard-card">
+            <form id="branding-form" class="stacked-form dashboard-form-grid">
+              <label>Store name<input type="text" id="branding-store-name" placeholder="Shopyar" /></label>
+              <label>Store logo URL<input type="url" id="branding-logo" placeholder="https://example.com/logo.png" /></label>
+              <label class="span-2">Background watermark URL<input type="url" id="branding-background-logo" placeholder="https://example.com/watermark.png" /></label>
+              <label>Primary color<input type="color" id="branding-primary-color" /></label>
+              <label>Dark color<input type="color" id="branding-dark-color" /></label>
+              <label>Soft color<input type="color" id="branding-soft-color" /></label>
+              <button class="btn btn-primary span-2" type="submit">Save branding</button>
+            </form>
+          </div>
+          <div class="dashboard-card">
+            <div class="branding-card modern">
+              <img id="branding-preview-logo" class="logo-large" src="assets/logo.jpg" alt="Shopyar logo" />
+              <div>
+                <p class="eyebrow">Current assets</p>
+                <h2>Store identity preview</h2>
+                <p class="muted">Saved values update the storefront header, footer, watermark, favicon, and color theme.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </section>
+    <script src="admin.js"></script>
+  </body>
+</html>

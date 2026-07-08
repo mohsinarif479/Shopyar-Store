@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shopyar Admin | Overview</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="admin-page">
+    <nav class="login-nav">
+      <a class="brand" href="index.html"><img class="logo" src="assets/logo.jpg" alt="Shopyar logo" /><span class="brand-text">Shopyar</span></a>
+      <a class="btn btn-secondary" href="index.html">Back to store</a>
+    </nav>
+    <section id="login-view" class="card login-card">
+      <p class="eyebrow">Secure access</p>
+      <h1>Admin login</h1>
+      <p class="muted">Sign in to manage orders, products, storefront content, slider, and brand settings.</p>
+      <form id="login-form" class="stacked-form">
+        <label>Email<input type="email" id="login-email" required /></label>
+        <label>Password<input type="password" id="login-password" required /></label>
+        <button class="btn btn-primary" type="submit">Login</button>
+      </form>
+      <p id="login-feedback" class="feedback"></p>
+    </section>
+
+    <section id="dashboard-view" class="admin-layout" hidden>
+      <aside class="admin-sidebar">
+        <a class="sidebar-brand" href="admin.html">
+          <img class="logo" src="assets/logo.jpg" alt="Shopyar logo" />
+          <div><strong class="brand-text">Shopyar</strong><span>Commerce Admin</span></div>
+        </a>
+        <nav class="sidebar-nav" aria-label="Admin navigation">
+          <a class="sidebar-link active" href="admin.html">Overview</a>
+          <a class="sidebar-link" href="admin-orders.html">Orders</a>
+          <a class="sidebar-link" href="admin-products.html">Products</a>
+          <a class="sidebar-link" href="admin-storefront.html">Storefront</a>
+          <a class="sidebar-link" href="admin-slider.html">Slider</a>
+          <a class="sidebar-link" href="admin-branding.html">Branding</a>
+          <a class="sidebar-link" href="admin-security.html">Security</a>
+        </nav>
+        <div class="sidebar-footer">
+          <a class="btn btn-secondary" href="index.html">View store</a>
+          <button id="logout-btn" class="btn btn-secondary" type="button">Logout</button>
+        </div>
+      </aside>
+
+      <main class="admin-main">
+        <header class="admin-page-header">
+          <div>
+            <p class="eyebrow">Command center</p>
+            <h1>Store overview</h1>
+            <p class="muted">Monitor current orders and product activity from one focused workspace.</p>
+          </div>
+          <a class="btn btn-primary" href="admin-products.html">Add product</a>
+        </header>
+
+        <section class="admin-metrics">
+          <div class="metric-card"><span>Products</span><strong id="metric-products">0</strong></div>
+          <div class="metric-card"><span>Orders</span><strong id="metric-orders">0</strong></div>
+          <div class="metric-card"><span>Collections</span><strong id="metric-collections">0</strong></div>
+        </section>
+
+        <section class="panel-grid">
+          <div class="dashboard-card">
+            <div class="section-header small">
+              <div><p class="eyebrow">Orders</p><h2>Latest orders</h2></div>
+              <a class="mini-btn" href="admin-orders.html">View all</a>
+            </div>
+            <div id="overview-orders" class="product-list"></div>
+          </div>
+          <div class="dashboard-card">
+            <div class="section-header small">
+              <div><p class="eyebrow">Inventory</p><h2>Recent products</h2></div>
+              <a class="mini-btn" href="admin-products.html">Manage</a>
+            </div>
+            <div id="overview-products" class="product-list"></div>
+          </div>
+        </section>
+      </main>
+    </section>
+
+    <script src="admin.js"></script>
+  </body>
+</html>
