@@ -1,5 +1,4 @@
 const ADMIN_STORAGE_KEY = "shopyar-admin-session";
-const ADMIN_PASSWORD_HASH_KEY = "shopyar-admin-password-hash";
 const ADMIN_API_TOKEN_KEY = "shopyar-admin-api-token";
 const PRODUCT_STORAGE_KEY = "shopyar-products";
 const COLLECTION_STORAGE_KEY = "shopyar-collections";
@@ -8,12 +7,9 @@ const ORDERS_STORAGE_KEY = "shopyar-orders";
 const BRANDING_STORAGE_KEY = "shopyar-branding";
 const STORE_CONTENT_STORAGE_KEY = "shopyar-store-content";
 const DEFAULT_LOGO = "assets/logo.jpg";
+const AUTH_API_URL = "/api/auth";
 const STORE_API_URL = "/api/store";
 const ORDERS_API_URL = "/api/orders";
-const ADMIN_CREDENTIALS = {
-  email: "admin@shopyar.com",
-  passwordHash: "eb19a3ce852fd55b60032d9a3dcc890a41b1d58ee68dd877db365adc63fb87d1"
-};
 
 const defaultStoreContent = {
   heroEyebrow: "Everyday finds",
@@ -31,6 +27,9 @@ const defaultStoreContent = {
   supportPhone: "+92 300 1234567",
   whatsappNumber: "+92 300 1234567",
   shippingText: "Free shipping on orders over Rs 8,000",
+  freeDeliveryMinimum: 8000,
+  karachiDeliveryFee: 250,
+  pakistanDeliveryFee: 500,
   ratingText: "4.9/5 rated by customers",
   supportText: "Help when you need it"
 };
@@ -132,24 +131,8 @@ function saveStoreContent(content) {
   localStorage.setItem(STORE_CONTENT_STORAGE_KEY, JSON.stringify(content));
 }
 
-async function hashPassword(password) {
-  const data = new TextEncoder().encode(password);
-  const digest = await crypto.subtle.digest("SHA-256", data);
-  return Array.from(new Uint8Array(digest))
-    .map((byte) => byte.toString(16).padStart(2, "0"))
-    .join("");
-}
-
-function getAdminPasswordHash() {
-  const storedHash = localStorage.getItem(ADMIN_PASSWORD_HASH_KEY);
-  if (storedHash) return storedHash;
-
-  localStorage.setItem(ADMIN_PASSWORD_HASH_KEY, ADMIN_CREDENTIALS.passwordHash);
-  return ADMIN_CREDENTIALS.passwordHash;
-}
-
 function getAdminToken() {
-  return localStorage.getItem(ADMIN_API_TOKEN_KEY) || "shopyar123";
+  return localStorage.getItem(ADMIN_API_TOKEN_KEY) || "";
 }
 
 async function adminFetch(url, options = {}) {
@@ -376,6 +359,7 @@ function showView(view) {
 
 function handleLogout() {
   localStorage.removeItem(ADMIN_STORAGE_KEY);
+  localStorage.removeItem(ADMIN_API_TOKEN_KEY);
   showView("login");
 
   if (!window.location.pathname.endsWith("/admin.html") && !window.location.pathname.endsWith("/admin")) {
@@ -418,27 +402,42 @@ function renderOrders() {
   const orders = getOrders();
   const markup = orders.length
     ? orders
-        .map((order) => {
+        .map((order, index) => {
           const items = Array.isArray(order.items) ? order.items : [];
           const itemSummary = items.length
             ? items.map((item) => `${escapeHtml(item.name)} x ${Number(item.quantity || 1)}`).join(", ")
             : escapeHtml(order.productName || "Product");
           const orderTotal = order.total || order.productPrice || 0;
+          const subtotal = order.subtotal || orderTotal;
+          const shippingFee = Number(order.shippingFee || 0);
           const createdAt = order.createdAt ? new Date(order.createdAt).toLocaleString() : "New order";
+          const orderNumber = order.id || index + 1;
 
           return `
-          <div class="product-item order-item">
-            <div>
-              <strong>${escapeHtml(order.customerName || "Customer")}</strong>
-              <span class="muted">${itemSummary} - ${formatPrice(orderTotal)} - ${escapeHtml(order.phone || "")}</span>
-              <div class="muted">${escapeHtml(order.address || "")}</div>
-              <div class="muted">${escapeHtml(createdAt)}</div>
-              ${order.notes ? `<div class="muted">Note: ${escapeHtml(order.notes)}</div>` : ""}
+          <details class="product-item order-item" data-order-details>
+            <summary class="order-summary-line">
+              <span><strong>${index + 1}. Order #${escapeHtml(orderNumber)}</strong><small>${escapeHtml(createdAt)}</small></span>
+              <b>${formatPrice(orderTotal)}</b>
+            </summary>
+            <div class="order-detail-grid">
+              <div><span>Name:</span><strong>${escapeHtml(order.customerName || "Customer")}</strong></div>
+              <div><span>Phone:</span><strong>${escapeHtml(order.phone || "")}</strong></div>
+              <div><span>Contact:</span><strong>${escapeHtml(order.contact || "")}</strong></div>
+              <div><span>News/offers:</span><strong>${order.marketingOptIn ? "Yes" : "No"}</strong></div>
+              <div class="span-2"><span>Address:</span><strong>${escapeHtml(order.address || "")}</strong></div>
+              <div class="span-2"><span>Items:</span><strong>${itemSummary}</strong></div>
+              <div><span>Subtotal:</span><strong>${formatPrice(subtotal)}</strong></div>
+              <div><span>Shipping:</span><strong>${shippingFee === 0 ? "Free" : formatPrice(shippingFee)}${order.shippingMethod ? ` (${escapeHtml(order.shippingMethod)})` : ""}</strong></div>
+              <div><span>Total:</span><strong>${formatPrice(orderTotal)}</strong></div>
+              <div><span>Billing:</span><strong>Same as shipping address</strong></div>
+              ${order.freeDeliveryApplied ? `<div class="span-2"><span>Delivery:</span><strong>Free delivery applied</strong></div>` : ""}
+              ${order.notes ? `<div class="span-2"><span>Note:</span><strong>${escapeHtml(order.notes)}</strong></div>` : ""}
+              <div><span>Status:</span><select class="order-status-select" data-order-status="${order.id}">
+                ${["New", "Confirmed", "Packed", "Shipped", "Delivered", "Cancelled"].map((status) => `<option value="${status}" ${status === (order.status || "New") ? "selected" : ""}>${status}</option>`).join("")}
+              </select></div>
+              <div class="order-detail-actions"><button class="mini-btn" type="button" data-action="close-order">Close</button></div>
             </div>
-            <select class="order-status-select" data-order-status="${order.id}">
-              ${["New", "Confirmed", "Packed", "Shipped", "Delivered", "Cancelled"].map((status) => `<option value="${status}" ${status === (order.status || "New") ? "selected" : ""}>${status}</option>`).join("")}
-            </select>
-          </div>
+          </details>
         `;
         })
         .join("")
@@ -446,6 +445,66 @@ function renderOrders() {
 
   if (orderList) orderList.innerHTML = markup;
   if (overviewOrders) overviewOrders.innerHTML = markup;
+}
+
+function getNewsSubscribers() {
+  const seen = new Set();
+  return getOrders()
+    .filter((order) => order.marketingOptIn && String(order.contact || "").includes("@"))
+    .map((order) => ({
+      email: String(order.contact || "").trim(),
+      name: order.customerName || "",
+      phone: order.phone || "",
+      orderId: order.id || "",
+      createdAt: order.createdAt || ""
+    }))
+    .filter((subscriber) => {
+      const key = subscriber.email.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+}
+
+function renderNewsEmails() {
+  const list = document.getElementById("news-email-list");
+  if (!list) return;
+
+  const subscribers = getNewsSubscribers();
+  list.innerHTML = subscribers.length
+    ? subscribers
+        .map((subscriber, index) => `
+          <div class="product-item">
+            <div>
+              <strong>${index + 1}. ${escapeHtml(subscriber.email)}</strong>
+              <span class="muted">${escapeHtml(subscriber.name || "Customer")} - ${escapeHtml(subscriber.phone || "No phone")} - Order #${escapeHtml(subscriber.orderId)}</span>
+            </div>
+          </div>
+        `)
+        .join("")
+    : '<p class="muted">No news email opt-ins yet.</p>';
+}
+
+function exportNewsEmailsCsv() {
+  const subscribers = getNewsSubscribers();
+  const header = ["Serial", "Email", "Name", "Phone", "Order ID", "Created At"];
+  const rows = subscribers.map((subscriber, index) => [
+    index + 1,
+    subscriber.email,
+    subscriber.name,
+    subscriber.phone,
+    subscriber.orderId,
+    subscriber.createdAt
+  ]);
+  const csv = [header, ...rows]
+    .map((row) => row.map((value) => `"${String(value ?? "").replace(/"/g, '""')}"`).join(","))
+    .join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "shopyar-news-emails.csv";
+  link.click();
+  URL.revokeObjectURL(link.href);
 }
 
 function renderCollections() {
@@ -556,6 +615,9 @@ function renderStoreContentForm() {
   setInputValue("content-support-phone", content.supportPhone);
   setInputValue("content-whatsapp-number", content.whatsappNumber);
   setInputValue("content-shipping-text", content.shippingText);
+  setInputValue("content-free-delivery-minimum", content.freeDeliveryMinimum);
+  setInputValue("content-karachi-delivery-fee", content.karachiDeliveryFee);
+  setInputValue("content-pakistan-delivery-fee", content.pakistanDeliveryFee);
   setInputValue("content-rating-text", content.ratingText);
   setInputValue("content-support-text", content.supportText);
 }
@@ -579,6 +641,9 @@ function handleStoreContentSubmit(event) {
     supportPhone: document.getElementById("content-support-phone").value.trim(),
     whatsappNumber: document.getElementById("content-whatsapp-number").value.trim(),
     shippingText: document.getElementById("content-shipping-text").value.trim(),
+    freeDeliveryMinimum: Number(document.getElementById("content-free-delivery-minimum").value) || 0,
+    karachiDeliveryFee: Number(document.getElementById("content-karachi-delivery-fee").value) || 0,
+    pakistanDeliveryFee: Number(document.getElementById("content-pakistan-delivery-fee").value) || 0,
     ratingText: document.getElementById("content-rating-text").value.trim(),
     supportText: document.getElementById("content-support-text").value.trim()
   };
@@ -593,13 +658,22 @@ async function handleLogin(event) {
   const email = document.getElementById("login-email").value.trim();
   const password = document.getElementById("login-password").value;
   const feedback = document.getElementById("login-feedback");
-  const passwordHash = await hashPassword(password);
 
-  if (email === ADMIN_CREDENTIALS.email && passwordHash === getAdminPasswordHash()) {
-    localStorage.setItem(ADMIN_STORAGE_KEY, "true");
-    if (!localStorage.getItem(ADMIN_API_TOKEN_KEY)) {
-      localStorage.setItem(ADMIN_API_TOKEN_KEY, "shopyar123");
+  try {
+    const response = await fetch(AUTH_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+
+    if (!response.ok) {
+      feedback.textContent = "Incorrect email or password.";
+      return;
     }
+
+    const data = await response.json();
+    localStorage.setItem(ADMIN_STORAGE_KEY, "true");
+    localStorage.setItem(ADMIN_API_TOKEN_KEY, data.token);
     await loadRemoteAdminData();
     showView("dashboard");
     renderProductList();
@@ -610,9 +684,10 @@ async function handleLogin(event) {
     renderAdminMetrics();
     renderSliderForm();
     renderStoreContentForm();
+    renderNewsEmails();
     feedback.textContent = "Welcome back!";
-  } else {
-    feedback.textContent = "Incorrect email or password.";
+  } catch (error) {
+    feedback.textContent = "Admin auth API is not available. Check Vercel environment variables.";
   }
 }
 
@@ -622,11 +697,6 @@ async function handlePasswordChange(event) {
   const newPassword = document.getElementById("new-password")?.value || "";
   const confirmPassword = document.getElementById("confirm-password")?.value || "";
   const feedback = document.getElementById("password-feedback");
-
-  if (await hashPassword(currentPassword) !== getAdminPasswordHash()) {
-    if (feedback) feedback.textContent = "Current password is incorrect.";
-    return;
-  }
 
   if (newPassword.length < 8) {
     if (feedback) feedback.textContent = "New password must be at least 8 characters.";
@@ -638,9 +708,23 @@ async function handlePasswordChange(event) {
     return;
   }
 
-  localStorage.setItem(ADMIN_PASSWORD_HASH_KEY, await hashPassword(newPassword));
-  event.target.reset();
-  if (feedback) feedback.textContent = "Password updated successfully.";
+  try {
+    const response = await adminFetch(AUTH_API_URL, {
+      method: "PUT",
+      body: JSON.stringify({ currentPassword, newPassword })
+    });
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      if (feedback) feedback.textContent = data.error || "Password update failed.";
+      return;
+    }
+
+    event.target.reset();
+    if (feedback) feedback.textContent = "Password updated successfully.";
+  } catch (error) {
+    if (feedback) feedback.textContent = "Password update failed. Check Vercel auth API.";
+  }
 }
 
 function handleProductSubmit(event) {
@@ -730,7 +814,20 @@ function handleSliderSubmit(event) {
 function handleDashboardClick(event) {
   const editButton = event.target.closest("button[data-action='edit']");
   const deleteButton = event.target.closest("button[data-action='delete']");
+  const closeOrderButton = event.target.closest("button[data-action='close-order']");
   const removeCollectionButton = event.target.closest("button[data-remove-collection]");
+  const exportNewsEmailsButton = event.target.closest("#export-news-emails");
+
+  if (closeOrderButton) {
+    const details = closeOrderButton.closest("details[data-order-details]");
+    if (details) details.open = false;
+    return;
+  }
+
+  if (exportNewsEmailsButton) {
+    exportNewsEmailsCsv();
+    return;
+  }
 
   if (editButton) {
     const product = getProducts().find((item) => item.id === Number(editButton.dataset.id));
@@ -808,7 +905,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderStoreContentForm();
   renderCategoryOptions();
 
-  if (localStorage.getItem(ADMIN_STORAGE_KEY)) {
+  if (localStorage.getItem(ADMIN_STORAGE_KEY) && getAdminToken()) {
     await loadRemoteAdminData();
     showView("dashboard");
     renderProductList();
@@ -819,6 +916,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderAdminMetrics();
     renderSliderForm();
     renderStoreContentForm();
+    renderNewsEmails();
   } else {
     showView("login");
   }

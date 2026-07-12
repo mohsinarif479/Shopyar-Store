@@ -4,7 +4,7 @@ const ORDERS_KEY = "shopyar:orders";
 
 function isAuthorized(request) {
   const token = request.headers["x-admin-token"];
-  return token && token === (process.env.ADMIN_TOKEN || "shopyar123");
+  return Boolean(token && process.env.ADMIN_TOKEN && token === process.env.ADMIN_TOKEN);
 }
 
 export default async function handler(request, response) {

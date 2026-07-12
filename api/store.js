@@ -34,6 +34,9 @@ const defaultStore = {
     supportPhone: "+92 300 1234567",
     whatsappNumber: "+92 300 1234567",
     shippingText: "Free shipping on orders over Rs 8,000",
+    freeDeliveryMinimum: 8000,
+    karachiDeliveryFee: 250,
+    pakistanDeliveryFee: 500,
     ratingText: "4.9/5 rated by customers",
     supportText: "Help when you need it"
   }
@@ -41,7 +44,7 @@ const defaultStore = {
 
 function isAuthorized(request) {
   const token = request.headers["x-admin-token"];
-  return token && token === (process.env.ADMIN_TOKEN || "shopyar123");
+  return Boolean(token && process.env.ADMIN_TOKEN && token === process.env.ADMIN_TOKEN);
 }
 
 export default async function handler(request, response) {

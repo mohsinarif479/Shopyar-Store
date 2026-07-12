@@ -26,6 +26,9 @@ const defaultStoreContent = {
   supportPhone: "+92 300 1234567",
   whatsappNumber: "+92 300 1234567",
   shippingText: "Free shipping on orders over Rs 8,000",
+  freeDeliveryMinimum: 8000,
+  karachiDeliveryFee: 250,
+  pakistanDeliveryFee: 500,
   ratingText: "4.9/5 rated by customers",
   supportText: "Help when you need it"
 };
@@ -263,6 +266,43 @@ function getCartItems() {
     .filter(Boolean);
 }
 
+let selectedShippingMethod = "karachi";
+
+function getDeliverySettings() {
+  const content = getStoreContent();
+  return {
+    freeDeliveryMinimum: Number(content.freeDeliveryMinimum) || 0,
+    karachiDeliveryFee: Number(content.karachiDeliveryFee) || 0,
+    pakistanDeliveryFee: Number(content.pakistanDeliveryFee) || 0
+  };
+}
+
+function getSelectedShippingMethod() {
+  const checkedMethod = document.querySelector("input[name='shippingMethod']:checked");
+  if (checkedMethod) selectedShippingMethod = checkedMethod.value;
+  return selectedShippingMethod;
+}
+
+function getCheckoutTotals(items, method = selectedShippingMethod) {
+  const settings = getDeliverySettings();
+  const subtotal = items.reduce((sum, item) => sum + item.lineTotal, 0);
+  const baseShipping = method === "all-pakistan" ? settings.pakistanDeliveryFee : settings.karachiDeliveryFee;
+  const freeDeliveryApplied = settings.freeDeliveryMinimum > 0 && subtotal >= settings.freeDeliveryMinimum;
+  const shipping = freeDeliveryApplied ? 0 : baseShipping;
+
+  return {
+    subtotal,
+    itemCount: items.reduce((sum, item) => sum + Number(item.quantity || 1), 0),
+    shipping,
+    baseShipping,
+    total: subtotal + shipping,
+    freeDeliveryApplied,
+    freeDeliveryMinimum: settings.freeDeliveryMinimum,
+    method,
+    methodLabel: method === "all-pakistan" ? "All Pakistan" : "Karachi Only"
+  };
+}
+
 function renderCart() {
   const cartItems = document.getElementById("cart-items");
   const cartTotal = document.getElementById("cart-total");
@@ -280,13 +320,16 @@ function renderCart() {
   cartItems.innerHTML = items
     .map((product) => `
       <div class="cart-item">
-        <strong>${escapeHtml(product.name)}</strong>
-        <div class="muted">${formatPrice(product.unitPrice)} each</div>
-        <div class="cart-item-actions">
-          <button class="qty-btn" type="button" data-action="cart-decrease" data-product-id="${product.id}">−</button>
-          <span class="qty-value">${product.quantity}</span>
-          <button class="qty-btn" type="button" data-action="cart-increase" data-product-id="${product.id}">+</button>
-          <button class="mini-btn" type="button" data-action="cart-remove" data-product-id="${product.id}">Remove</button>
+        <img src="${escapeHtml(getProductImage(product, "primary"))}" alt="${escapeHtml(product.name)}" />
+        <div>
+          <strong>${escapeHtml(product.name)}</strong>
+          <div class="muted">${formatPrice(product.unitPrice)} each</div>
+          <div class="cart-item-actions">
+            <button class="qty-btn" type="button" data-action="cart-decrease" data-product-id="${product.id}">−</button>
+            <span class="qty-value">${product.quantity}</span>
+            <button class="qty-btn" type="button" data-action="cart-increase" data-product-id="${product.id}">+</button>
+            <button class="mini-btn" type="button" data-action="cart-remove" data-product-id="${product.id}">Remove</button>
+          </div>
         </div>
         <div class="cart-item-price">${formatPrice(product.lineTotal)}</div>
       </div>
@@ -336,20 +379,61 @@ function renderCartPage() {
 
 function renderCheckoutPage() {
   const summary = document.getElementById("checkout-page-summary");
+  const shippingMethods = document.getElementById("shipping-methods");
   if (!summary) return;
   const cart = getCart();
   currentCheckoutItems = cart;
   const items = getCartItems();
   if (!items.length) {
     summary.innerHTML = '<p class="muted">Your cart is empty. Add products before checkout.</p>';
+    if (shippingMethods) shippingMethods.innerHTML = '<p class="muted">Choose products before selecting a shipping method.</p>';
     return;
   }
 
+  const method = getSelectedShippingMethod();
+  const totals = getCheckoutTotals(items, method);
+  const settings = getDeliverySettings();
+
+  if (shippingMethods) {
+    shippingMethods.innerHTML = `
+      <label class="shipping-option ${method === "karachi" ? "active" : ""}">
+        <input type="radio" name="shippingMethod" value="karachi" ${method === "karachi" ? "checked" : ""} />
+        <span><strong>Karachi Only</strong><small>You Will Receive Confirmation Call</small></span>
+        <b>${totals.freeDeliveryApplied ? "Free" : formatPrice(settings.karachiDeliveryFee)}</b>
+      </label>
+      <label class="shipping-option ${method === "all-pakistan" ? "active" : ""}">
+        <input type="radio" name="shippingMethod" value="all-pakistan" ${method === "all-pakistan" ? "checked" : ""} />
+        <span><strong>All Pakistan</strong><small>You Will Receive Confirmation Call</small></span>
+        <b>${totals.freeDeliveryApplied ? "Free" : formatPrice(settings.pakistanDeliveryFee)}</b>
+      </label>
+      ${totals.freeDeliveryApplied ? `<div class="free-delivery-tag">Free delivery applied on this order</div>` : `<p class="muted">Free delivery starts from ${formatPrice(totals.freeDeliveryMinimum)}.</p>`}
+    `;
+  }
+
   summary.innerHTML = `
-    <ul>
-      ${items.map((item) => `<li>${escapeHtml(item.name)} x ${item.quantity} - ${formatPrice(item.lineTotal)}</li>`).join("")}
-    </ul>
-    <div class="price">Total: ${formatPrice(items.reduce((sum, item) => sum + item.lineTotal, 0))}</div>
+    <div class="summary-title-row"><span>Shopping cart</span><a href="cart.html">Edit</a></div>
+    <div class="checkout-product-list">
+      ${items.map((item) => `
+        <div class="checkout-product-row">
+          <div class="checkout-product-image">
+            <img src="${escapeHtml(getProductImage(item, "primary"))}" alt="${escapeHtml(item.name)}" />
+            <span>${item.quantity}</span>
+          </div>
+          <div>
+            <strong>${escapeHtml(item.name)}</strong>
+            <small>Quantity ${item.quantity}</small>
+          </div>
+          <b>${formatPrice(item.lineTotal)}</b>
+        </div>
+      `).join("")}
+    </div>
+    <div class="cost-summary">
+      <h3>Cost summary</h3>
+      <div><span>Subtotal · ${totals.itemCount} items</span><b>${formatPrice(totals.subtotal)}</b></div>
+      <div><span>Shipping · ${escapeHtml(totals.methodLabel)}</span><b>${totals.shipping === 0 ? "Free" : formatPrice(totals.shipping)}</b></div>
+      ${totals.freeDeliveryApplied ? `<div class="free-delivery-tag">Free delivery unlocked</div>` : ""}
+      <div class="summary-total"><span>Total</span><strong><small>PKR</small> ${formatPrice(totals.total)}</strong></div>
+    </div>
   `;
 }
 
@@ -369,7 +453,12 @@ function renderOrderConfirmation() {
     <p>Your order #${order.id} has been received. We will contact you on ${escapeHtml(order.phone || "your phone number")} to confirm delivery.</p>
     <div class="checkout-summary">
       <ul>${order.items.map((item) => `<li>${escapeHtml(item.name)} x ${item.quantity}</li>`).join("")}</ul>
-      <div class="price">Total: ${formatPrice(order.total)}</div>
+      <div class="cost-summary">
+        <div><span>Subtotal</span><b>${formatPrice(order.subtotal || order.total || 0)}</b></div>
+        <div><span>Shipping${order.shippingMethod ? ` · ${escapeHtml(order.shippingMethod)}` : ""}</span><b>${Number(order.shippingFee || 0) === 0 ? "Free" : formatPrice(order.shippingFee)}</b></div>
+        ${order.freeDeliveryApplied ? `<div class="free-delivery-tag">Free delivery applied</div>` : ""}
+        <div class="summary-total"><span>Total</span><strong>${formatPrice(order.total)}</strong></div>
+      </div>
     </div>
     <a class="btn btn-primary" href="shop.html">Continue shopping</a>
   `;
@@ -1046,20 +1135,14 @@ async function handleCheckoutSubmit(event) {
   if (!form) return;
 
   const data = new FormData(form);
-  const products = getVisibleProducts();
-  const items = currentCheckoutItems
-    .map((entry) => {
-      const product = products.find((item) => item.id === Number(entry.id));
-      if (!product) return null;
-      const unitPrice = product.salePrice != null && product.salePrice < product.price ? product.salePrice : product.price;
-      return {
-        id: product.id,
-        name: product.name,
-        quantity: Number(entry.quantity || 1),
-        price: unitPrice
-      };
-    })
-    .filter(Boolean);
+  const checkoutItems = getCartItems();
+  const items = checkoutItems.map((product) => ({
+    id: product.id,
+    name: product.name,
+    quantity: Number(product.quantity || 1),
+    price: product.unitPrice,
+    lineTotal: product.lineTotal
+  }));
 
   if (!items.length) {
     showToast("Your cart is empty");
@@ -1067,13 +1150,32 @@ async function handleCheckoutSubmit(event) {
     return;
   }
 
+  const shippingMethod = data.get("shippingMethod") || getSelectedShippingMethod();
+  selectedShippingMethod = shippingMethod;
+  const totals = getCheckoutTotals(checkoutItems, shippingMethod);
+  const customerName = `${data.get("firstName") || ""} ${data.get("lastName") || ""}`.trim();
+  const addressParts = [
+    data.get("address"),
+    data.get("apartment"),
+    data.get("city"),
+    data.get("postalCode"),
+    data.get("country")
+  ].filter(Boolean);
+
   const order = {
     id: Date.now(),
     items,
-    total: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
-    customerName: data.get("customerName") || "",
+    subtotal: totals.subtotal,
+    shippingFee: totals.shipping,
+    shippingMethod: totals.methodLabel,
+    freeDeliveryApplied: totals.freeDeliveryApplied,
+    total: totals.total,
+    customerName,
+    contact: data.get("contact") || "",
     phone: data.get("phone") || "",
-    address: data.get("address") || "",
+    address: addressParts.join(", "),
+    billingAddress: "same",
+    marketingOptIn: data.get("marketingOptIn") === "on",
     notes: data.get("notes") || "",
     status: "New",
     createdAt: new Date().toISOString()
@@ -1134,6 +1236,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (sortSelect) {
     sortSelect.addEventListener("change", () => renderCatalog(selectedCategory, searchQuery));
   }
+
+  document.addEventListener("change", (event) => {
+    const shippingMethod = event.target.closest("input[name='shippingMethod']");
+    if (!shippingMethod) return;
+    selectedShippingMethod = shippingMethod.value;
+    renderCheckoutPage();
+  });
 
   const cartToggle = document.getElementById("cart-toggle");
   const cartClose = document.getElementById("cart-close");

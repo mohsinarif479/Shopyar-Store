@@ -9,17 +9,65 @@
   </head>
   <body>
     <header class="topbar"><div class="topbar-inner"><a class="brand" href="index.html"><img class="logo" src="assets/logo.jpg" alt="Shopyar logo" /><span class="brand-text">Shopyar</span></a><nav class="nav-links"><a href="shop.html">Shop</a><a href="cart.html">Cart</a></nav></div></header>
-    <main class="store-page">
-      <section class="store-page-hero"><p class="eyebrow">Checkout</p><h1>Delivery details</h1><p>Enter your contact and address so we can confirm your order.</p></section>
-      <section class="checkout-layout">
-        <form class="checkout-form dashboard-card" id="checkout-form">
-          <label>Full name<input type="text" name="customerName" required /></label>
-          <label>Phone number<input type="tel" name="phone" required /></label>
-          <label>Address<textarea name="address" rows="4" required></textarea></label>
-          <label>Notes<textarea name="notes" rows="2" placeholder="Any delivery instructions?"></textarea></label>
-          <button class="btn btn-primary" type="submit">Place order</button>
+    <main class="checkout-page">
+      <section class="checkout-shell">
+        <form class="checkout-form checkout-main" id="checkout-form">
+          <div class="checkout-brandline">
+            <a class="brand" href="index.html"><img class="logo" src="assets/logo.jpg" alt="Shopyar logo" /><span class="brand-text">Shopyar</span></a>
+            <a class="inline-link" href="index.html">Navigate to Online Store</a>
+          </div>
+
+          <section class="checkout-panel">
+            <div class="checkout-heading"><h1>Checkout</h1><a class="inline-link" href="cart.html">Shopping cart</a></div>
+            <h2>Contact email</h2>
+            <label>Email address<input type="email" name="contact" autocomplete="email" required /></label>
+            <label class="checkbox-row"><input type="checkbox" name="marketingOptIn" /> Email me with news and offers</label>
+          </section>
+
+          <section class="checkout-panel">
+            <h2>Delivery</h2>
+            <label>Country / Region<input type="text" name="country" value="Pakistan" required /></label>
+            <div class="form-row">
+              <label>First name<input type="text" name="firstName" required /></label>
+              <label>Last name<input type="text" name="lastName" required /></label>
+            </div>
+            <label>Address<input type="text" name="address" required /></label>
+            <label>Apartment, suite, etc. (optional)<input type="text" name="apartment" /></label>
+            <div class="form-row">
+              <label>City<input type="text" name="city" required /></label>
+              <label>Postal code (optional)<input type="text" name="postalCode" /></label>
+            </div>
+            <label>Phone<input type="tel" name="phone" required /></label>
+            <label class="checkbox-row"><input type="checkbox" name="saveInfo" /> Save this information for next time</label>
+          </section>
+
+          <section class="checkout-panel">
+            <h2>Shipping method</h2>
+            <div id="shipping-methods" class="shipping-methods"></div>
+          </section>
+
+          <section class="checkout-panel">
+            <h2>Payment</h2>
+            <p class="muted">All transactions are secure and encrypted.</p>
+            <div class="payment-box"><strong>Cash on Delivery (COD)</strong><span>COD All Pakistan</span></div>
+          </section>
+
+          <section class="checkout-panel">
+            <h2>Billing address</h2>
+            <label class="radio-row"><input type="radio" name="billingAddress" value="same" checked /> Same as shipping address</label>
+          </section>
+
+          <section class="checkout-panel">
+            <h2>Finalize order</h2>
+            <label>Order notes<textarea name="notes" rows="2" placeholder="Any delivery instructions?"></textarea></label>
+            <button class="btn btn-primary checkout-submit" type="submit">Submit</button>
+          </section>
         </form>
-        <aside class="dashboard-card"><p class="eyebrow">Summary</p><div id="checkout-page-summary" class="checkout-summary"></div></aside>
+
+        <aside class="checkout-summary-card">
+          <h2>Order summary</h2>
+          <div id="checkout-page-summary" class="checkout-summary"></div>
+        </aside>
       </section>
     </main>
     <div id="toast" class="toast" hidden></div>

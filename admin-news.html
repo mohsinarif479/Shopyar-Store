@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Shopyar Admin | Security</title>
+    <title>Shopyar Admin | News Emails</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="admin-page">
@@ -35,8 +35,8 @@
           <a class="sidebar-link" href="admin-storefront.html">Storefront</a>
           <a class="sidebar-link" href="admin-slider.html">Slider</a>
           <a class="sidebar-link" href="admin-branding.html">Branding</a>
-          <a class="sidebar-link" href="admin-news.html">News Emails</a>
-          <a class="sidebar-link active" href="admin-security.html">Security</a>
+          <a class="sidebar-link active" href="admin-news.html">News Emails</a>
+          <a class="sidebar-link" href="admin-security.html">Security</a>
         </nav>
         <div class="sidebar-footer">
           <a class="btn btn-secondary" href="index.html">View store</a>
@@ -47,27 +47,15 @@
       <main class="admin-main">
         <header class="admin-page-header">
           <div>
-            <p class="eyebrow">Access</p>
-            <h1>Security</h1>
-            <p class="muted">Change the local admin portal password used for this store dashboard.</p>
+            <p class="eyebrow">Marketing</p>
+            <h1>News emails</h1>
+            <p class="muted">Customers who ticked news and offers during checkout are listed here.</p>
           </div>
+          <button id="export-news-emails" class="btn btn-primary" type="button">Export CSV</button>
         </header>
-        <section class="panel-grid two-col">
-          <div class="dashboard-card">
-            <form id="password-form" class="stacked-form">
-              <label>Current password<input type="password" id="current-password" required /></label>
-              <label>New password<input type="password" id="new-password" minlength="8" required /></label>
-              <label>Confirm new password<input type="password" id="confirm-password" minlength="8" required /></label>
-              <button class="btn btn-primary" type="submit">Update password</button>
-            </form>
-            <p id="password-feedback" class="feedback"></p>
-          </div>
-          <div class="dashboard-card admin-preview-card">
-            <p class="eyebrow">Note</p>
-            <h2>Password protection</h2>
-            <p class="muted">The password is stored as a SHA-256 hash for safer local access to the admin portal.</p>
-          </div>
-        </section>
+        <div class="dashboard-card">
+          <div id="news-email-list" class="product-list"></div>
+        </div>
       </main>
     </section>
     <script src="admin.js"></script>
