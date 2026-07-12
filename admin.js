@@ -367,6 +367,19 @@ function handleLogout() {
   }
 }
 
+function normalizeGalleryImages(value) {
+  if (!value) return [];
+
+  if (Array.isArray(value)) {
+    return value.filter(Boolean).map((item) => String(item).trim()).filter(Boolean);
+  }
+
+  return String(value)
+    .split(/\n|,/) 
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
 function renderProductList() {
   const productList = document.getElementById("product-list");
   if (!productList) return;
@@ -378,20 +391,32 @@ function renderProductList() {
   }
 
   productList.innerHTML = products
-    .map(
-      (product) => `
+    .map((product) => {
+      const galleryImages = normalizeGalleryImages(product.gallery || product.images || product.image);
+      const primaryImage = product.image || galleryImages[0] || "";
+      const imagesMarkup = galleryImages.length
+        ? `<div class="product-image-row">${galleryImages
+            .slice(0, 4)
+            .map((image) => `<img class="product-thumb" src="${escapeHtml(image)}" alt="${escapeHtml(product.name)}" />`)
+            .join("")}</div>`
+        : primaryImage
+          ? `<div class="product-image-row"><img class="product-thumb" src="${escapeHtml(primaryImage)}" alt="${escapeHtml(product.name)}" /></div>`
+          : "";
+
+      return `
         <div class="product-item">
           <div>
             <strong>${escapeHtml(product.name)}</strong>
             <span class="muted">${escapeHtml(product.category)} - ${formatPrice(product.price)} - ${escapeHtml(product.status || "active")}${product.stock != null && product.stock !== "" ? ` - Stock ${escapeHtml(product.stock)}` : ""}</span>
+            ${imagesMarkup}
           </div>
           <div class="product-item-actions">
             <button class="mini-btn" data-action="edit" data-id="${product.id}" type="button">Edit</button>
             <button class="mini-btn" data-action="delete" data-id="${product.id}" type="button">Delete</button>
           </div>
         </div>
-      `
-    )
+      `;
+    })
     .join("");
 }
 
@@ -666,12 +691,17 @@ async function handleLogin(event) {
       body: JSON.stringify({ email, password })
     });
 
-    if (!response.ok) {
-      feedback.textContent = "Incorrect email or password.";
-      return;
+    let data = {};
+    try {
+      data = await response.json();
+    } catch (error) {
+      data = {};
     }
 
-    const data = await response.json();
+    if (!response.ok) {
+      feedback.textContent = data.error || data.message || "Incorrect email or password.";
+      return;
+    }
     localStorage.setItem(ADMIN_STORAGE_KEY, "true");
     localStorage.setItem(ADMIN_API_TOKEN_KEY, data.token);
     await loadRemoteAdminData();
@@ -727,11 +757,40 @@ async function handlePasswordChange(event) {
   }
 }
 
-function handleProductSubmit(event) {
+async function handleProductSubmit(event) {
   event.preventDefault();
 
+  const productImageInput = document.getElementById("product-image-file");
+  const galleryFilesInput = document.getElementById("product-gallery-files");
   const products = getProducts();
   const productId = document.getElementById("product-id").value;
+  const galleryValue = document.getElementById("product-gallery")?.value || "";
+  const galleryImages = normalizeGalleryImages(galleryValue);
+  const primaryImageUrl = document.getElementById("product-image").value.trim();
+
+  const readFileAsDataUrl = (file) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("Unable to read image file"));
+    reader.readAsDataURL(file);
+  });
+
+  let uploadedPrimaryImage = primaryImageUrl;
+  let uploadedGalleryImages = [...galleryImages];
+
+  if (productImageInput?.files?.length) {
+    uploadedPrimaryImage = await readFileAsDataUrl(productImageInput.files[0]);
+  }
+
+  if (galleryFilesInput?.files?.length) {
+    const uploadedFiles = Array.from(galleryFilesInput.files);
+    const fileUrls = [];
+    for (const file of uploadedFiles) {
+      fileUrls.push(await readFileAsDataUrl(file));
+    }
+    uploadedGalleryImages = [...fileUrls, ...uploadedGalleryImages];
+  }
+
   const productData = {
     name: document.getElementById("product-name").value.trim(),
     category: document.getElementById("product-category").value.trim(),
@@ -739,8 +798,9 @@ function handleProductSubmit(event) {
     salePrice: document.getElementById("product-sale-price").value
       ? Number(document.getElementById("product-sale-price").value)
       : null,
-    image: document.getElementById("product-image").value.trim(),
-    gallery: document.getElementById("product-gallery")?.value.trim() || "",
+    image: uploadedPrimaryImage,
+    gallery: uploadedGalleryImages,
+    images: uploadedGalleryImages,
     sku: document.getElementById("product-sku")?.value.trim() || "",
     stock: document.getElementById("product-stock")?.value === "" ? null : Number(document.getElementById("product-stock")?.value),
     status: document.getElementById("product-status")?.value || "active",
@@ -774,8 +834,12 @@ function resetProductForm() {
   const productIdInput = document.getElementById("product-id");
   const formTitle = document.getElementById("product-form-title");
   const cancelEditButton = document.getElementById("cancel-edit-btn");
+  const imageInput = document.getElementById("product-image-file");
+  const galleryFilesInput = document.getElementById("product-gallery-files");
 
   if (productForm) productForm.reset();
+  if (imageInput) imageInput.value = "";
+  if (galleryFilesInput) galleryFilesInput.value = "";
   if (productIdInput) productIdInput.value = "";
   if (formTitle) formTitle.textContent = "Add a product";
   if (cancelEditButton) cancelEditButton.hidden = true;
@@ -841,7 +905,14 @@ function handleDashboardClick(event) {
     document.getElementById("product-price").value = product.price || "";
     document.getElementById("product-sale-price").value = product.salePrice || "";
     document.getElementById("product-image").value = product.image || "";
-    if (document.getElementById("product-gallery")) document.getElementById("product-gallery").value = product.gallery || "";
+    if (document.getElementById("product-gallery")) {
+      const galleryValue = Array.isArray(product.gallery)
+        ? product.gallery.join("\n")
+        : Array.isArray(product.images)
+          ? product.images.join("\n")
+          : product.gallery || product.images || "";
+      document.getElementById("product-gallery").value = galleryValue;
+    }
     if (document.getElementById("product-sku")) document.getElementById("product-sku").value = product.sku || "";
     if (document.getElementById("product-stock")) document.getElementById("product-stock").value = product.stock ?? "";
     if (document.getElementById("product-status")) document.getElementById("product-status").value = product.status || "active";

@@ -75,8 +75,10 @@
                 <label>Status<select id="product-status"><option value="active">Active</option><option value="draft">Draft</option></select></label>
                 <label>Delivery fee<input type="number" id="product-delivery-fee" min="0" step="0.01" /></label>
               </div>
-              <label>Image URL<input type="url" id="product-image" placeholder="https://example.com/image.jpg" /></label>
-              <label>Gallery image URLs<textarea id="product-gallery" rows="2" placeholder="Separate multiple image URLs with commas"></textarea></label>
+              <label>Primary image<input type="file" id="product-image-file" accept="image/*" /></label>
+              <label>Primary image URL<input type="url" id="product-image" placeholder="https://example.com/image.jpg" /></label>
+              <label>Gallery images<input type="file" id="product-gallery-files" accept="image/*" multiple /></label>
+              <label>Gallery image URLs<textarea id="product-gallery" rows="2" placeholder="Separate multiple image URLs with commas or new lines"></textarea></label>
               <label>Tags / features<textarea id="product-tags" rows="2" placeholder="Portable, rechargeable, compact"></textarea></label>
               <label>Description<textarea id="product-description" rows="4" required></textarea></label>
               <label class="checkbox-row"><input type="checkbox" id="product-popular" /> Mark as popular</label>

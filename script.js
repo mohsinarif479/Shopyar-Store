@@ -721,7 +721,8 @@ function renderProductCards(products, containerId) {
       const primaryImage = getProductImage(product, "primary");
       const secondaryImage = getProductImage(product, "secondary");
       const safeName = escapeHtml(product.name);
-      const safeDescription = escapeHtml(product.description);
+      const safeDescription = escapeHtml((product.description || "").replace(/\s+/g, " ").trim());
+      const previewDescription = safeDescription.length > 120 ? `${safeDescription.slice(0, 117)}...` : safeDescription;
       const safeBadge = escapeHtml(product.badge || "Featured");
 
       return `
@@ -735,7 +736,7 @@ function renderProductCards(products, containerId) {
           <div class="product-card-body">
             <span class="product-badge">${safeBadge}</span>
             <h3>${safeName}</h3>
-            <p>${safeDescription}</p>
+            <p>${previewDescription}</p>
             <div class="product-meta-row">
               <span>${escapeHtml(product.category || "General")}</span>
               <span>${escapeHtml(stockLabel)}</span>
