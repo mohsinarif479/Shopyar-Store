@@ -15,9 +15,37 @@ function getRequiredEnv(name) {
   return value;
 }
 
+function getRequestBody(request) {
+  if (!request || !request.body) {
+    return {};
+  }
+
+  if (typeof request.body === "string") {
+    try {
+      return JSON.parse(request.body);
+    } catch (error) {
+      return {};
+    }
+  }
+
+  if (typeof request.body === "object") {
+    return request.body;
+  }
+
+  return {};
+}
+
 async function getPasswordHash() {
-  const storedHash = await kv.get(ADMIN_HASH_KEY);
-  return storedHash || getRequiredEnv("ADMIN_PASSWORD_HASH");
+  try {
+    const storedHash = await kv.get(ADMIN_HASH_KEY);
+    if (storedHash) {
+      return storedHash;
+    }
+  } catch (error) {
+    // Fall back to the environment variable when Vercel KV is not configured.
+  }
+
+  return getRequiredEnv("ADMIN_PASSWORD_HASH");
 }
 
 function isAuthorized(request) {
@@ -28,7 +56,8 @@ function isAuthorized(request) {
 export default async function handler(request, response) {
   try {
     if (request.method === "POST") {
-      const { email, password } = request.body || {};
+      const requestBody = getRequestBody(request);
+      const { email, password } = requestBody || {};
       const adminEmail = getRequiredEnv("ADMIN_EMAIL");
       const adminToken = getRequiredEnv("ADMIN_TOKEN");
       const passwordHash = await getPasswordHash();
@@ -49,7 +78,8 @@ export default async function handler(request, response) {
         return response.status(401).json({ error: "Unauthorized" });
       }
 
-      const { currentPassword, newPassword } = request.body || {};
+      const requestBody = getRequestBody(request);
+      const { currentPassword, newPassword } = requestBody || {};
       if (!newPassword || String(newPassword).length < 8) {
         return response.status(400).json({ error: "New password must be at least 8 characters" });
       }
