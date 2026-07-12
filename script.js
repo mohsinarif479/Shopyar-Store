@@ -704,6 +704,44 @@ function getProductImage(product, variant = "primary") {
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
 
+function getProductImages(product) {
+  const values = [];
+  if (product.image) values.push(product.image);
+
+  const gallery = Array.isArray(product.gallery)
+    ? product.gallery
+    : String(product.gallery || product.images || "")
+        .split(/[\n,]+/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+
+  gallery.forEach((image) => {
+    if (image && !values.includes(image)) values.push(image);
+  });
+
+  if (!values.length) values.push(getProductImage(product, "primary"));
+  return values;
+}
+
+function renderProductImageTrack(product, altText) {
+  const images = getProductImages(product);
+  return `
+    <div class="product-image-track" style="--image-count: ${images.length}">
+      ${images.map((image, index) => `<img src="${escapeHtml(image)}" alt="${escapeHtml(index === 0 ? altText : `${altText} gallery ${index + 1}`)}" />`).join("")}
+    </div>
+  `;
+}
+
+function renderProductGalleryThumbs(product, altText) {
+  const images = getProductImages(product);
+  if (images.length <= 1) return "";
+  return `
+    <div class="product-gallery-thumbs" aria-label="${escapeHtml(altText)} gallery">
+      ${images.map((image, index) => `<img src="${escapeHtml(image)}" alt="${escapeHtml(`${altText} thumbnail ${index + 1}`)}" />`).join("")}
+    </div>
+  `;
+}
+
 function renderProductCards(products, containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
@@ -718,8 +756,6 @@ function renderProductCards(products, containerId) {
       const hasSale = product.salePrice != null && product.salePrice < product.price;
       const stock = product.stock === "" || product.stock == null ? null : Number(product.stock);
       const stockLabel = stock == null ? "In stock" : stock > 0 ? `${stock} in stock` : "Out of stock";
-      const primaryImage = getProductImage(product, "primary");
-      const secondaryImage = getProductImage(product, "secondary");
       const safeName = escapeHtml(product.name);
       const safeDescription = escapeHtml((product.description || "").replace(/\s+/g, " ").trim());
       const previewDescription = safeDescription.length > 120 ? `${safeDescription.slice(0, 117)}...` : safeDescription;
@@ -728,10 +764,7 @@ function renderProductCards(products, containerId) {
       return `
         <article class="product-card" data-product-id="${product.id}" tabindex="0" role="button">
           <div class="product-media" aria-hidden="true">
-            <div class="product-image-track">
-              <img src="${escapeHtml(primaryImage)}" alt="${safeName}" />
-              <img src="${escapeHtml(secondaryImage)}" alt="${safeName} preview" />
-            </div>
+            ${renderProductImageTrack(product, product.name)}
           </div>
           <div class="product-card-body">
             <span class="product-badge">${safeBadge}</span>
@@ -987,8 +1020,6 @@ function renderProductPage() {
   }
 
   const hasSale = product.salePrice != null && product.salePrice < product.price;
-  const primaryImage = getProductImage(product, "primary");
-  const secondaryImage = getProductImage(product, "secondary");
   const safeName = escapeHtml(product.name);
   const safeCategory = escapeHtml(product.category);
   const safeDescription = escapeHtml(product.description);
@@ -1004,11 +1035,9 @@ function renderProductPage() {
     <div class="product-detail-grid">
       <div class="product-detail-media">
         <div class="product-media product-media-large">
-          <div class="product-image-track">
-            <img src="${escapeHtml(primaryImage)}" alt="${safeName}" />
-            <img src="${escapeHtml(secondaryImage)}" alt="${safeName} preview" />
-          </div>
+          ${renderProductImageTrack(product, product.name)}
         </div>
+        ${renderProductGalleryThumbs(product, product.name)}
       </div>
       <div class="product-detail-copy">
         <p class="eyebrow">${safeCategory}</p>
