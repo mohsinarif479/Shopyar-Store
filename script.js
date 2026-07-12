@@ -710,7 +710,9 @@ function getProductImages(product) {
 
   const gallery = Array.isArray(product.gallery)
     ? product.gallery
-    : String(product.gallery || product.images || "")
+    : String(product.gallery || product.images || "").startsWith("data:image")
+      ? [String(product.gallery || product.images || "").trim()]
+      : String(product.gallery || product.images || "")
         .split(/[\n,]+/)
         .map((item) => item.trim())
         .filter(Boolean);
@@ -723,21 +725,36 @@ function getProductImages(product) {
   return values;
 }
 
+function renderProductGallery(product, altText) {
+  const images = getProductImages(product);
+  const safeAlt = escapeHtml(altText);
+  return `
+    <div class="product-gallery" data-gallery>
+      <div class="product-gallery-main">
+        <img data-gallery-main src="${escapeHtml(images[0])}" alt="${safeAlt}" />
+        ${images.length > 1 ? `
+          <button class="gallery-arrow prev" type="button" data-action="gallery-prev" aria-label="Previous image">‹</button>
+          <button class="gallery-arrow next" type="button" data-action="gallery-next" aria-label="Next image">›</button>
+        ` : ""}
+      </div>
+      ${images.length > 1 ? `
+        <div class="product-gallery-thumbs" aria-label="${safeAlt} gallery">
+          ${images.map((image, index) => `
+            <button class="gallery-thumb ${index === 0 ? "active" : ""}" type="button" data-action="gallery-thumb" data-gallery-index="${index}" data-gallery-image="${escapeHtml(image)}">
+              <img src="${escapeHtml(image)}" alt="${escapeHtml(`${altText} image ${index + 1}`)}" />
+            </button>
+          `).join("")}
+        </div>
+      ` : ""}
+    </div>
+  `;
+}
+
 function renderProductImageTrack(product, altText) {
   const images = getProductImages(product);
   return `
     <div class="product-image-track" style="--image-count: ${images.length}">
       ${images.map((image, index) => `<img src="${escapeHtml(image)}" alt="${escapeHtml(index === 0 ? altText : `${altText} gallery ${index + 1}`)}" />`).join("")}
-    </div>
-  `;
-}
-
-function renderProductGalleryThumbs(product, altText) {
-  const images = getProductImages(product);
-  if (images.length <= 1) return "";
-  return `
-    <div class="product-gallery-thumbs" aria-label="${escapeHtml(altText)} gallery">
-      ${images.map((image, index) => `<img src="${escapeHtml(image)}" alt="${escapeHtml(`${altText} thumbnail ${index + 1}`)}" />`).join("")}
     </div>
   `;
 }
@@ -1034,10 +1051,7 @@ function renderProductPage() {
   detail.innerHTML = `
     <div class="product-detail-grid">
       <div class="product-detail-media">
-        <div class="product-media product-media-large">
-          ${renderProductImageTrack(product, product.name)}
-        </div>
-        ${renderProductGalleryThumbs(product, product.name)}
+        ${renderProductGallery(product, product.name)}
       </div>
       <div class="product-detail-copy">
         <p class="eyebrow">${safeCategory}</p>
@@ -1096,6 +1110,21 @@ function getQuantityFromContext(element) {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 1;
 }
 
+function setGalleryImage(gallery, index) {
+  const thumbs = Array.from(gallery.querySelectorAll("[data-action='gallery-thumb']"));
+  const mainImage = gallery.querySelector("[data-gallery-main]");
+  if (!thumbs.length || !mainImage) return;
+
+  const safeIndex = (index + thumbs.length) % thumbs.length;
+  const activeThumb = thumbs[safeIndex];
+  mainImage.src = activeThumb.dataset.galleryImage || "";
+  mainImage.alt = activeThumb.querySelector("img")?.alt || mainImage.alt;
+  gallery.dataset.galleryIndex = String(safeIndex);
+  thumbs.forEach((thumb, thumbIndex) => {
+    thumb.classList.toggle("active", thumbIndex === safeIndex);
+  });
+}
+
 function handleProductInteractions(event) {
   const card = event.target.closest(".product-card");
   const buyButton = event.target.closest("button[data-action='buy']");
@@ -1105,6 +1134,22 @@ function handleProductInteractions(event) {
   const cartIncreaseButton = event.target.closest("button[data-action='cart-increase']");
   const cartDecreaseButton = event.target.closest("button[data-action='cart-decrease']");
   const cartRemoveButton = event.target.closest("button[data-action='cart-remove']");
+  const galleryNextButton = event.target.closest("button[data-action='gallery-next']");
+  const galleryPrevButton = event.target.closest("button[data-action='gallery-prev']");
+  const galleryThumbButton = event.target.closest("button[data-action='gallery-thumb']");
+
+  if (galleryNextButton || galleryPrevButton || galleryThumbButton) {
+    event.stopPropagation();
+    const gallery = event.target.closest("[data-gallery]");
+    if (!gallery) return;
+    const currentIndex = Number(gallery.dataset.galleryIndex || 0);
+    if (galleryThumbButton) {
+      setGalleryImage(gallery, Number(galleryThumbButton.dataset.galleryIndex || 0));
+    } else {
+      setGalleryImage(gallery, currentIndex + (galleryNextButton ? 1 : -1));
+    }
+    return;
+  }
 
   if (qtyIncButton) {
     const qtyValue = qtyIncButton.parentElement?.querySelector(".qty-value");

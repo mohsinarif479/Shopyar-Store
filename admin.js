@@ -374,7 +374,10 @@ function normalizeGalleryImages(value) {
     return value.filter(Boolean).map((item) => String(item).trim()).filter(Boolean);
   }
 
-  return String(value)
+  const textValue = String(value).trim();
+  if (textValue.startsWith("data:image")) return [textValue];
+
+  return textValue
     .split(/\n|,/) 
     .map((item) => item.trim())
     .filter(Boolean);
@@ -392,16 +395,17 @@ function renderProductList() {
 
   productList.innerHTML = products
     .map((product) => {
-      const galleryImages = normalizeGalleryImages(product.gallery || product.images || product.image);
-      const primaryImage = product.image || galleryImages[0] || "";
-      const imagesMarkup = galleryImages.length
-        ? `<div class="product-image-row">${galleryImages
+      const galleryImages = [
+        product.image,
+        ...normalizeGalleryImages(product.gallery || product.images)
+      ].filter(Boolean);
+      const uniqueImages = [...new Set(galleryImages)];
+      const imagesMarkup = uniqueImages.length
+        ? `<div class="product-image-row">${uniqueImages
             .slice(0, 4)
             .map((image) => `<img class="product-thumb" src="${escapeHtml(image)}" alt="${escapeHtml(product.name)}" />`)
             .join("")}</div>`
-        : primaryImage
-          ? `<div class="product-image-row"><img class="product-thumb" src="${escapeHtml(primaryImage)}" alt="${escapeHtml(product.name)}" /></div>`
-          : "";
+        : "";
 
       return `
         <div class="product-item">
