@@ -1306,9 +1306,19 @@ a {
   box-shadow: var(--shadow);
 }
 
-.product-gallery-main img {
-  width: 100%;
+.product-gallery-track {
+  display: flex;
+  width: calc(var(--gallery-count, 1) * 100%);
   height: 100%;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.product-gallery-track img {
+  width: calc(100% / var(--gallery-count, 1));
+  min-width: calc(100% / var(--gallery-count, 1));
+  height: 100%;
+  flex: 0 0 calc(100% / var(--gallery-count, 1));
   object-fit: contain;
   padding: 14px;
   display: block;

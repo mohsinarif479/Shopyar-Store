@@ -704,9 +704,14 @@ function getProductImage(product, variant = "primary") {
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
 
+function isValidImageSource(value) {
+  const source = String(value || "").trim();
+  return /^(data:image\/|https?:\/\/|\.?\/|assets\/|blob:)/i.test(source);
+}
+
 function getProductImages(product) {
   const values = [];
-  if (product.image) values.push(product.image);
+  if (isValidImageSource(product.image)) values.push(String(product.image).trim());
 
   const gallery = Array.isArray(product.gallery)
     ? product.gallery
@@ -718,7 +723,8 @@ function getProductImages(product) {
         .filter(Boolean);
 
   gallery.forEach((image) => {
-    if (image && !values.includes(image)) values.push(image);
+    const normalizedImage = String(image || "").trim();
+    if (isValidImageSource(normalizedImage) && !values.includes(normalizedImage)) values.push(normalizedImage);
   });
 
   if (!values.length) values.push(getProductImage(product, "primary"));
@@ -731,7 +737,9 @@ function renderProductGallery(product, altText) {
   return `
     <div class="product-gallery" data-gallery>
       <div class="product-gallery-main">
-        <img data-gallery-main src="${escapeHtml(images[0])}" alt="${safeAlt}" />
+        <div class="product-gallery-track" data-gallery-track style="--gallery-count: ${images.length}">
+          ${images.map((image, index) => `<img src="${escapeHtml(image)}" alt="${escapeHtml(index === 0 ? altText : `${altText} image ${index + 1}`)}" />`).join("")}
+        </div>
         ${images.length > 1 ? `
           <button class="gallery-arrow prev" type="button" data-action="gallery-prev" aria-label="Previous image">‹</button>
           <button class="gallery-arrow next" type="button" data-action="gallery-next" aria-label="Next image">›</button>
@@ -1112,13 +1120,11 @@ function getQuantityFromContext(element) {
 
 function setGalleryImage(gallery, index) {
   const thumbs = Array.from(gallery.querySelectorAll("[data-action='gallery-thumb']"));
-  const mainImage = gallery.querySelector("[data-gallery-main]");
-  if (!thumbs.length || !mainImage) return;
+  const track = gallery.querySelector("[data-gallery-track]");
+  if (!thumbs.length || !track) return;
 
   const safeIndex = (index + thumbs.length) % thumbs.length;
-  const activeThumb = thumbs[safeIndex];
-  mainImage.src = activeThumb.dataset.galleryImage || "";
-  mainImage.alt = activeThumb.querySelector("img")?.alt || mainImage.alt;
+  track.style.transform = `translateX(-${safeIndex * (100 / thumbs.length)}%)`;
   gallery.dataset.galleryIndex = String(safeIndex);
   thumbs.forEach((thumb, thumbIndex) => {
     thumb.classList.toggle("active", thumbIndex === safeIndex);
