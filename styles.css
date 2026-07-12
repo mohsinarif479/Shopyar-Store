@@ -623,7 +623,7 @@ a {
   position: relative;
   overflow: hidden;
   height: 230px;
-  background: linear-gradient(135deg, var(--green-soft), white);
+  background: #f8faf7;
 }
 
 .product-image-track {
@@ -648,9 +648,11 @@ a {
   width: calc(100% / var(--image-count, 1));
   min-width: calc(100% / var(--image-count, 1));
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  padding: 10px;
   display: block;
   scroll-snap-align: start;
+  background: #f8faf7;
 }
 
 .product-card-body {
@@ -916,8 +918,9 @@ a {
   width: 64px;
   height: 64px;
   border-radius: 10px;
-  object-fit: cover;
+  object-fit: contain;
   border: 1px solid var(--border);
+  background: #f8faf7;
 }
 
 .checkout-product-image span {
@@ -999,8 +1002,9 @@ a {
 .cart-line img {
   width: 88px;
   height: 72px;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 10px;
+  background: #f8faf7;
 }
 
 .product-info-grid {
@@ -1182,10 +1186,10 @@ a {
 .cart-item img {
   width: 54px;
   height: 54px;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 10px;
   border: 1px solid var(--border);
-  background: white;
+  background: #f8faf7;
 }
 
 .cart-item strong {
@@ -1294,14 +1298,15 @@ a {
   overflow: hidden;
   border: 1px solid var(--border);
   border-radius: 22px;
-  background: white;
+  background: #f8faf7;
   box-shadow: var(--shadow);
 }
 
 .product-gallery-main img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  padding: 14px;
   display: block;
 }
 
@@ -1357,8 +1362,10 @@ a {
 .gallery-thumb img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  padding: 4px;
   display: block;
+  background: #f8faf7;
 }
 
 .product-detail-copy h1 {
@@ -1894,10 +1901,10 @@ a {
 .product-thumb {
   width: 42px;
   height: 42px;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 8px;
   border: 1px solid var(--border);
-  background: var(--cream);
+  background: #f8faf7;
   display: block;
 }
 
