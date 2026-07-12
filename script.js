@@ -134,6 +134,34 @@ function escapeHtml(value) {
     .replace(/'/g, "&#039;");
 }
 
+function formatProductDescription(description) {
+  const text = String(description || "").replace(/\r\n/g, "\n").trim();
+  if (!text) return "";
+
+  const keyFeaturesMatch = text.match(/\bKey Features\b[:\s]*/i);
+  if (!keyFeaturesMatch) {
+    return text
+      .split(/\n{2,}/)
+      .map((paragraph) => `<p>${escapeHtml(paragraph).replace(/\n/g, "<br>")}</p>`)
+      .join("");
+  }
+
+  const before = text.slice(0, keyFeaturesMatch.index).trim();
+  const after = text.slice(keyFeaturesMatch.index + keyFeaturesMatch[0].length).trim();
+  const featureLines = after
+    .split(/\n+/)
+    .map((line) => line.trim().replace(/^[-*•]\s*/, ""))
+    .filter(Boolean);
+
+  return `
+    ${before ? `<p>${escapeHtml(before).replace(/\n/g, "<br>")}</p>` : ""}
+    <h2>Key Features</h2>
+    <ul>
+      ${featureLines.map((feature) => `<li>${escapeHtml(feature)}</li>`).join("")}
+    </ul>
+  `;
+}
+
 function getStoreContent() {
   const stored = localStorage.getItem(STORE_CONTENT_STORAGE_KEY);
   if (!stored) return defaultStoreContent;
@@ -1047,8 +1075,8 @@ function renderProductPage() {
   const hasSale = product.salePrice != null && product.salePrice < product.price;
   const safeName = escapeHtml(product.name);
   const safeCategory = escapeHtml(product.category);
-  const safeDescription = escapeHtml(product.description);
-  const features = (product.features || product.tags || product.description || "")
+  const formattedDescription = formatProductDescription(product.description);
+  const features = (product.features || product.tags || "")
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean)
@@ -1064,7 +1092,7 @@ function renderProductPage() {
       <div class="product-detail-copy">
         <p class="eyebrow">${safeCategory}</p>
         <h1>${safeName}</h1>
-        <p>${safeDescription}</p>
+        <div class="product-description-formatted">${formattedDescription}</div>
         <div class="product-meta-row detail">
           <span>${escapeHtml(stockLabel)}</span>
           ${product.sku ? `<span>SKU: ${escapeHtml(product.sku)}</span>` : ""}
@@ -1086,7 +1114,7 @@ function renderProductPage() {
       <section class="dashboard-card">
         <h2>Product features</h2>
         <ul class="clean-list">
-          ${features.length ? features.map((feature) => `<li>${escapeHtml(feature)}</li>`).join("") : `<li>${safeDescription}</li>`}
+          ${features.length ? features.map((feature) => `<li>${escapeHtml(feature)}</li>`).join("") : `<li>See product description for complete details.</li>`}
         </ul>
       </section>
       <section class="dashboard-card">

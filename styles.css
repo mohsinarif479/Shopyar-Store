@@ -1387,6 +1387,32 @@ a {
   margin: 4px 0 10px;
 }
 
+.product-description-formatted {
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.product-description-formatted p {
+  margin: 0 0 18px;
+}
+
+.product-description-formatted h2 {
+  margin: 18px 0 12px;
+  color: var(--text);
+  font-size: 1.15rem;
+}
+
+.product-description-formatted ul {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 18px;
+  padding-left: 20px;
+}
+
+.product-description-formatted li {
+  padding-left: 4px;
+}
+
 .product-page-actions {
   margin-top: 18px;
 }
