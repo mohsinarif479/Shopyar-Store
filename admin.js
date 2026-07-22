@@ -383,6 +383,11 @@ function normalizeGalleryImages(value) {
     .filter(Boolean);
 }
 
+function isValidImageSource(value) {
+  const source = String(value || "").trim();
+  return /^(data:image\/|https?:\/\/|\.?\/|assets\/|blob:)/i.test(source);
+}
+
 function renderProductList() {
   const productList = document.getElementById("product-list");
   if (!productList) return;
@@ -398,7 +403,7 @@ function renderProductList() {
       const galleryImages = [
         product.image,
         ...normalizeGalleryImages(product.gallery || product.images)
-      ].filter(Boolean);
+      ].filter(isValidImageSource);
       const uniqueImages = [...new Set(galleryImages)];
       const imagesMarkup = uniqueImages.length
         ? `<div class="product-image-row">${uniqueImages
@@ -794,6 +799,8 @@ async function handleProductSubmit(event) {
     }
     uploadedGalleryImages = [...fileUrls, ...uploadedGalleryImages];
   }
+
+  uploadedGalleryImages = [...new Set(uploadedGalleryImages.map((image) => String(image || "").trim()).filter(isValidImageSource))];
 
   const productData = {
     name: document.getElementById("product-name").value.trim(),
